@@ -71,4 +71,6 @@ public class ReceiptService {
   }
 
 
+  public Receipt getReceipt(String userUID, String receiptUID) {
+  }
 }
