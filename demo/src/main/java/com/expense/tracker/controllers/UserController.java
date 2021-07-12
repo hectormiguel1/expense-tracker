@@ -1,8 +1,11 @@
 package com.expense.tracker.controllers;
 
+import com.expense.tracker.models.User;
 import com.expense.tracker.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 /**
  * Class UserController
@@ -10,26 +13,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class UserController {
 
-  //
-  // Fields
-  //
-
-  @Autowired
   private UserService userService;
-  
-  //
-  // Constructors
-  //
-  public UserController () { };
-  
-  //
-  // Methods
-  //
 
 
-  //
-  // Accessor methods
-  //
+  public UserController(UserService userService)
+  {
+    this.userService = userService;
+  }
 
   /**
    * Set the value of userService
@@ -47,18 +37,18 @@ public class UserController {
     return userService;
   }
 
-  //
-  // Other methods
-  //
+
 
   /**
    * //Opens Endpoint at /newUser to create new User
    * //End point takes new user object through request body
-   * @param        newUser //Todo, add Mapping and add PathVariable
-   * 
+   * @param newUser //Todo, add Mapping and add PathVariable
+   *
    */
-  public void createNewUser(User newUser)
+  @PutMapping("/newUser")
+  public void createNewUser(@RequestBody User newUser)
   {
+    userService.createUser(newUser);
   }
 
 
@@ -68,8 +58,10 @@ public class UserController {
    * request body.
    * @param        modifiedUser
    */
+  @PutMapping("/user/limits/{uid")
   public void modifyUser(User modifiedUser)
   {
+    userService.modifyUser(modifiedUser);
   }
 
 
@@ -77,10 +69,12 @@ public class UserController {
    * //Todo implement Mapping, at /user/limits/{uid}
    * //Function will return the spending limits for the user.
    * @return       Map<String, Double>
-   * @param        userUID
+   * @param        uid
    */
-  public Map<String, Double>  getUserLimits(String userUID)
+  @GetMapping("/user/limits/{uid}")
+  public Map<String, Double> getUserLimits(@PathVariable  String uid)
   {
+    return userService.getLimits(uid);
   }
 
 
@@ -88,10 +82,13 @@ public class UserController {
    * //Todo implement mapping /user/spenditure/{uid}
    * //Function returns the Current Spenditures per category for the passed UID
    * @return       Map<String, Double>
-   * @param        userUID
+   * @param        uid
    */
-  public Map<String, Double>  getUserSpenditure(String userUID)
+
+  @GetMapping("/user/spenditure/{uid}")
+  public Map<String, Double>  getUserSpenditure(@PathVariable  String uid)
   {
+     return userService.getCurrentSpending(uid);
   }
 
 
