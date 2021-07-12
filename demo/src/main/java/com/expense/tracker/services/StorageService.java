@@ -1,6 +1,8 @@
 package com.expense.tracker.services;
+import com.expense.tracker.exceptions.ReceiptDoesNotExistException;
 import com.expense.tracker.exceptions.UserAlreadyExistsException;
 import com.expense.tracker.exceptions.UserDoesNotExistException;
+import com.expense.tracker.models.Item;
 import com.expense.tracker.models.Receipt;
 import com.expense.tracker.models.User;
 import com.google.auth.oauth2.GoogleCredentials;
@@ -13,7 +15,9 @@ import org.springframework.stereotype.Service;
 
 import java.io.FileInputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException; 
 
 
@@ -79,6 +83,44 @@ public class StorageService {
         
     }
 
+    Map<String, Double> getUserExpenses(String userUid) throws UserDoesNotExistException {
+        try{
+            if(!db.collection("users").document(userUid).get().get().exists()){
+                throw new UserDoesNotExistException("User" + userUid + " does not exist");
+            }
+            var query = db.collection("users").document(userUid).collection("expenses").get().get();
+            var expenses = new HashMap<String, Double>();
+            for (var expense : query) {
+                expenses.put(expense.getId(), expense.getDouble("amount"));
+            }
+            return expenses;
+        } catch (InterruptedException | ExecutionException e) {
+            System.out.println("Error: " + e.getMessage());
+            System.out.println("Error getting expenses for user: " + userUid);
+        }
+        return null;
+    }
+
+    Map<String, Double> getUserLimits(String userUid) throws UserDoesNotExistException {
+        try{
+            if(!db.collection("users").document(userUid).get().get().exists()){
+                throw new UserDoesNotExistException("User" + userUid + " does not exist");
+            }
+            var query = db.collection("users").document(userUid).collection("limits").get().get();
+            var limits = new HashMap<String, Double>();
+            for (var limit : query) {
+                limits.put(limit.getId(), limit.getDouble("amount"));
+            }
+            return limits;
+        } catch (InterruptedException | ExecutionException e) {
+            System.out.println("Error: " + e.getMessage());
+            System.out.println("Error getting limits for user: " + userUid);
+        }
+        return null;
+    }
+    
+        
+
     List<Receipt> getReceipts(String userUid) throws UserDoesNotExistException {
         try {
             if(!db.collection("users").document(userUid).get().get().exists()){
@@ -98,14 +140,47 @@ public class StorageService {
         return null;
     }
 
-    public void saveReceipt(Receipt receipt, String userUID) throws UserDoesNotExistException {
+    public String saveReceipt(Receipt receipt, String userUID) throws UserDoesNotExistException {
+        try {
+            if(!db.collection("users").document(userUID).get().get().exists()){
+                throw new UserDoesNotExistException("User" + userUID + " does not exist");
+            }
+            var writeResult = db.collection("users").document(userUID).collection("receipts").document(receipt.getUid()).set(receipt);
+            return writeResult.get().getUpdateTime().toString();
+        } catch (InterruptedException | ExecutionException e) {
+            System.out.println("Error: " + e.getMessage());
+            System.out.println("Error saving receipt: " + receipt.getUid());
+        }
+        return null;
     }
+
+    public List<Item> getRecieptItems(String userUID, String receiptUID) throws UserDoesNotExistException, ReceiptDoesNotExistException {
+        try {
+            if(!db.collection("users").document(userUID).get().get().exists()){
+                throw new UserDoesNotExistException("User" + userUID + " does not exist");
+            }
+            if(!db.collection("users").document(userUID).collection("receipts").document(receiptUID).get().get().exists()){
+                throw new ReceiptDoesNotExistException("Receipt" + receiptUID + " does not exist");
+            }
+            var items = db.collection("users").document(userUID).collection("receipts").document(receiptUID).collection("items").get().get().getDocuments();
+            List<Item> itemList = new ArrayList<>();
+            for(var document : items) {
+                itemList.add(document.toObject(Item.class));
+            }
+            return itemList;
+        } catch (InterruptedException | ExecutionException e) {
+            System.out.println("Error: " + e.getMessage());
+            System.out.println("Error getting items: " + userUID + " " + receiptUID);
+        }
+        return null;
+    }
+
+    }
+
+
+    
         
 
-
-
-
-    }
 
 
 
