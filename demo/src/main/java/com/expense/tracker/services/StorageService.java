@@ -18,11 +18,17 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException; 
+import java.util.concurrent.ExecutionException;
 
 
 @Service 
 public class StorageService { 
+
+    final private String USER_COLLECTION = "users";
+    final private String ITEM_COLLECTION = "items";
+    final private String RECEIPT_COLLECTION = "receipts";
+    final private String USER_LIMIT_COLLECTION = "limits";
+    final private String USER_EXPENSES_COLLECTION = "expenses";
 
     Firestore db = null;
     //File needs to be placed inside src/main/resources/ folder
@@ -48,10 +54,10 @@ public class StorageService {
     public String saveNewUser(User newUser) throws UserAlreadyExistsException {
         String newUserUid = newUser.getUid();
         try {
-            if(db.collection("users").document(newUserUid).get().get().exists()){
+            if(db.collection(USER_COLLECTION).document(newUserUid).get().get().exists()){
                 throw new UserAlreadyExistsException("User" + newUserUid + " already exists");
             }
-            var writeResult = db.collection("users").document(newUserUid).set(newUser);
+            var writeResult = db.collection(USER_COLLECTION).document(newUserUid).set(newUser);
             return writeResult.get().getUpdateTime().toString();
         } catch (InterruptedException | ExecutionException e) {
             System.out.println("Error: " + e.getMessage());
@@ -68,10 +74,10 @@ public class StorageService {
     {
         String updatedUserUid = updatedUser.getUid();
         try {
-            if(!db.collection("users").document(updatedUserUid).get().get().exists()){
+            if(!db.collection(USER_COLLECTION).document(updatedUserUid).get().get().exists()){
                 throw new UserDoesNotExistException("User" + updatedUserUid + " does not exist");
             }
-            var writeResult =db.collection("users").document(updatedUserUid).set(updatedUser);
+            var writeResult =db.collection(USER_COLLECTION).document(updatedUserUid).set(updatedUser);
         return writeResult.get().getUpdateTime().toString();
         } catch (InterruptedException | ExecutionException e) {
             System.out.println("Error: " + e.getMessage());
@@ -82,18 +88,14 @@ public class StorageService {
         return null;
         
     }
-
+   
     Map<String, Double> getUserExpenses(String userUid) throws UserDoesNotExistException {
         try{
-            if(!db.collection("users").document(userUid).get().get().exists()){
+            if(!db.collection(USER_COLLECTION).document(userUid).get().get().exists()){
                 throw new UserDoesNotExistException("User" + userUid + " does not exist");
             }
-            var query = db.collection("users").document(userUid).collection("expenses").get().get();
-            var expenses = new HashMap<String, Double>();
-            for (var expense : query) {
-                expenses.put(expense.getId(), expense.getDouble("amount"));
-            }
-            return expenses;
+            var query = db.collection(USER_COLLECTION).document(userUid).get().get().toObject(User.class);
+            return query.getCurrentExpenditure();
         } catch (InterruptedException | ExecutionException e) {
             System.out.println("Error: " + e.getMessage());
             System.out.println("Error getting expenses for user: " + userUid);
@@ -103,10 +105,10 @@ public class StorageService {
 
     Map<String, Double> getUserLimits(String userUid) throws UserDoesNotExistException {
         try{
-            if(!db.collection("users").document(userUid).get().get().exists()){
+            if(!db.collection(USER_COLLECTION).document(userUid).get().get().exists()){
                 throw new UserDoesNotExistException("User" + userUid + " does not exist");
             }
-            var query = db.collection("users").document(userUid).collection("limits").get().get();
+            var query = db.collection(USER_COLLECTION).document(userUid).collection(USER_LIMIT_COLLECTION).get().get();
             var limits = new HashMap<String, Double>();
             for (var limit : query) {
                 limits.put(limit.getId(), limit.getDouble("amount"));
@@ -123,10 +125,10 @@ public class StorageService {
 
     List<Receipt> getReceipts(String userUid) throws UserDoesNotExistException {
         try {
-            if(!db.collection("users").document(userUid).get().get().exists()){
+            if(!db.collection(USER_COLLECTION).document(userUid).get().get().exists()){
                 throw new UserDoesNotExistException("User" + userUid + " does not exist");
             }
-            var recieptDocuments = db.collection("users").document(userUid).collection("receipts").get().get().getDocuments();
+            var recieptDocuments = db.collection(USER_COLLECTION).document(userUid).collection(RECEIPT_COLLECTION).get().get().getDocuments();
             List<Receipt> receiptList = new ArrayList<>();
             for(var document : recieptDocuments) {
                 receiptList.add(document.toObject(Receipt.class));
@@ -142,10 +144,10 @@ public class StorageService {
 
     public String saveReceipt(Receipt receipt, String userUID) throws UserDoesNotExistException {
         try {
-            if(!db.collection("users").document(userUID).get().get().exists()){
+            if(!db.collection(USER_COLLECTION).document(userUID).get().get().exists()){
                 throw new UserDoesNotExistException("User" + userUID + " does not exist");
             }
-            var writeResult = db.collection("users").document(userUID).collection("receipts").document(receipt.getUid()).set(receipt);
+            var writeResult = db.collection(USER_COLLECTION).document(userUID).collection(RECEIPT_COLLECTION).document(receipt.getUid()).set(receipt);
             return writeResult.get().getUpdateTime().toString();
         } catch (InterruptedException | ExecutionException e) {
             System.out.println("Error: " + e.getMessage());
@@ -156,13 +158,13 @@ public class StorageService {
 
     public List<Item> getRecieptItems(String userUID, String receiptUID) throws UserDoesNotExistException, ReceiptDoesNotExistException {
         try {
-            if(!db.collection("users").document(userUID).get().get().exists()){
+            if(!db.collection(USER_COLLECTION).document(userUID).get().get().exists()){
                 throw new UserDoesNotExistException("User" + userUID + " does not exist");
             }
-            if(!db.collection("users").document(userUID).collection("receipts").document(receiptUID).get().get().exists()){
+            if(!db.collection(USER_COLLECTION).document(userUID).collection(RECEIPT_COLLECTION).document(receiptUID).get().get().exists()){
                 throw new ReceiptDoesNotExistException("Receipt" + receiptUID + " does not exist");
             }
-            var items = db.collection("users").document(userUID).collection("receipts").document(receiptUID).collection("items").get().get().getDocuments();
+            var items = db.collection(USER_COLLECTION).document(userUID).collection(RECEIPT_COLLECTION).document(receiptUID).collection(ITEM_COLLECTION).get().get().getDocuments();
             List<Item> itemList = new ArrayList<>();
             for(var document : items) {
                 itemList.add(document.toObject(Item.class));
