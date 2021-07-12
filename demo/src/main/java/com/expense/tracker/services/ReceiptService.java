@@ -2,6 +2,7 @@ package com.expense.tracker.services;
 
 import com.expense.tracker.models.Item;
 import com.expense.tracker.models.Receipt;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -10,6 +11,7 @@ import java.util.List;
  * Service which provides functionality around the reciepts stored for the user.
  * 
  */
+@Service
 public class ReceiptService {
 
   //

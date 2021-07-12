@@ -1,12 +1,14 @@
 package com.expense.tracker.services;
 
 import com.expense.tracker.models.User;
+import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
 /**
  * Class UserService
  */
+@Service
 public class UserService {
 
   //

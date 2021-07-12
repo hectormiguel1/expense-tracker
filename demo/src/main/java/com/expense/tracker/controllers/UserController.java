@@ -1,14 +1,20 @@
 package com.expense.tracker.controllers;
 
+import com.expense.tracker.services.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RestController;
+
 /**
  * Class UserController
  */
+@RestController
 public class UserController {
 
   //
   // Fields
   //
 
+  @Autowired
   private UserService userService;
   
   //

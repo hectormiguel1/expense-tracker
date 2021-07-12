@@ -3,12 +3,14 @@ package com.expense.tracker.controllers;
 import com.expense.tracker.models.Receipt;
 import com.expense.tracker.services.ReceiptService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 /**
  * Class ReceiptController
  */
+@RestController
 public class ReceiptController {
 
   //
@@ -59,7 +61,7 @@ public class ReceiptController {
    * @param        userUID
    * @param        newReceipt
    */
-  public void newReceipt(String userUID, Reciept newReceipt)
+  public void newReceipt(String userUID, Receipt newReceipt)
   {
   }
 
