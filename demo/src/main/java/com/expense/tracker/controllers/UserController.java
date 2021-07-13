@@ -58,7 +58,7 @@ public class UserController {
    * request body.
    * @param        modifiedUser
    */
-  @PutMapping("/user/limits/{uid")
+  @PutMapping("/user/limits/{uid}")
   public void modifyUser(User modifiedUser)
   {
     userService.modifyUser(modifiedUser);
