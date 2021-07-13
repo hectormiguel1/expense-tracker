@@ -145,8 +145,12 @@ public class StorageService {
             if(!db.collection(USER_COLLECTION).document(userUID).get().get().exists()){
                 throw new UserDoesNotExistException("User" + userUID + " does not exist");
             }
-            var writeResult = db.collection(USER_COLLECTION).document(userUID).collection(RECEIPT_COLLECTION).document(receipt.getUid()).set(receipt);
-            return writeResult.get().getUpdateTime().toString();
+            var dbUser = db.collection(USER_COLLECTION).document(userUID).get().get().toObject(User.class);
+            if(dbUser != null) {
+                dbUser.getReceipts().add(receipt);
+                var result = db.collection(USER_COLLECTION).document(userUID).set(dbUser);
+                return result.get().getUpdateTime().toString();
+            }
         } catch (InterruptedException | ExecutionException e) {
             System.out.println("Error: " + e.getMessage());
             System.out.println("Error saving receipt: " + receipt.getUid());
