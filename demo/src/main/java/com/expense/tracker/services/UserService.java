@@ -1,7 +1,9 @@
 package com.expense.tracker.services;
 
 import com.expense.tracker.models.User;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 
 import java.util.Map;
 
@@ -10,6 +12,14 @@ import java.util.Map;
  */
 @Service
 public class UserService {
+
+  public void setStorageService(StorageService storageService) {
+    this.storageService = storageService;
+  }
+
+  @Autowired
+ private StorageService storageService;
+
 
   //
   // Fields
@@ -40,6 +50,7 @@ public class UserService {
    */
   public void createUser(User newUser)
   {
+    storageService.saveNewUser(newUser);
   }
 
 
@@ -51,6 +62,7 @@ public class UserService {
    */
   public void modifyUser(User userToModify)
   {
+    storageService.updateUser(userToModify);
   }
 
 
@@ -61,6 +73,7 @@ public class UserService {
    */
   public Map<String, Double> getLimits(String userUID)
   {
+    return storageService.getUserLimits(userUID);
   }
 
 
@@ -71,6 +84,7 @@ public class UserService {
    */
   public Map<String, Double>  getCurrentSpending(String userUID)
   {
+    return storageService.getUserExpenses(userUID);
   }
 
 
