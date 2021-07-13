@@ -189,6 +189,22 @@ public class StorageService {
         return null;
     }
 
+    public Receipt getReceipt(String userUID, String receiptUID) throws UserDoesNotExistException {
+        try {
+            var user = db.collection(USER_COLLECTION).document(userUID).get().get().toObject(User.class);
+            if(user != null) {
+                for(Receipt receipt : user.getReceipts()) {
+                    if(receipt.getUid().equals(receiptUID)) {
+                        return receipt;
+                    }
+                }
+            }
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     }
 
 
