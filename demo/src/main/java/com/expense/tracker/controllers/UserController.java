@@ -58,8 +58,8 @@ public class UserController {
    * request body.
    * @param        modifiedUser
    */
-  @PutMapping("/user/limits/{uid")
-  public void modifyUser(User modifiedUser)
+  @PutMapping("/user")
+  public void modifyUser(@RequestBody User modifiedUser)
   {
     userService.modifyUser(modifiedUser);
   }
@@ -71,7 +71,7 @@ public class UserController {
    * @return       Map<String, Double>
    * @param        uid
    */
-  @GetMapping("/user/limits/{uid}")
+  @GetMapping("/user/{uid}/limits")
   public Map<String, Double> getUserLimits(@PathVariable  String uid)
   {
     return userService.getLimits(uid);
@@ -79,14 +79,14 @@ public class UserController {
 
 
   /**
-   * //Todo implement mapping /user/spenditure/{uid}
-   * //Function returns the Current Spenditures per category for the passed UID
+   * //Todo implement mapping /user/Expenditure/{uid}
+   * //Function returns the Current Expenditures per category for the passed UID
    * @return       Map<String, Double>
    * @param        uid
    */
 
-  @GetMapping("/user/spenditure/{uid}")
-  public Map<String, Double>  getUserSpenditure(@PathVariable  String uid)
+  @GetMapping("/user/{uid}/expenditure")
+  public Map<String, Double> getUserExpenditure(@PathVariable  String uid)
   {
      return userService.getCurrentSpending(uid);
   }

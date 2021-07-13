@@ -42,12 +42,12 @@ public class ReceiptController {
    * //Todo mapping to create a new receipt at /user/{uid}/receipts
    * //Function will take in a new Receipt object through the request body and add
    * that receipt to the passed UID
-   * @param        userUID
+   * @param        uid
    * @param        newReceipt
    */
-  @PutMapping("/user/{uid}")
-  public void newReceipt(String userUID, Receipt newReceipt) {
-    receiptService.createReceipt(newReceipt,userUID);
+  @PutMapping("/user/{uid}/receipt")
+  public void newReceipt(@PathVariable String uid, Receipt newReceipt) {
+    receiptService.createReceipt(newReceipt,uid);
   }
 
 
@@ -55,11 +55,11 @@ public class ReceiptController {
    * //Get Mapping at /user/{uid}/receipts
    * //Function will return all the receipts for the passed UID
    * @return       List<Receipt>
-   * @param        userUID
+   * @param        uid
    */
-  @GetMapping("user/allreceipts/{uid}")
-  public List<Receipt> getAllReceipts(@PathVariable String userUID) {
-    return receiptService.getReceipts(userUID);
+  @GetMapping("user/{uid}/receipts")
+  public List<Receipt> getAllReceipts(@PathVariable String uid) {
+    return receiptService.getReceipts(uid);
   }
 
 
@@ -67,12 +67,12 @@ public class ReceiptController {
    * //Get mapping at /user/{uid}/{receiptID}
    * //Function will return receipt with receipt UID for user UID
    * @return       Receipt
-   * @param        userUID
+   * @param        uid
    * @param        receiptUID
    */
-  @GetMapping("user/receipt/uid")
-  public Receipt getReceipt(@PathVariable String userUID, String receiptUID) {
-    return receiptService.getReceipt(userUID,receiptUID);
+  @GetMapping("user/{uid}/receipt/{receiptUID}")
+  public Receipt getReceipt(@PathVariable String uid, @PathVariable String receiptUID) {
+    return receiptService.getReceipt(uid,receiptUID);
   }
 
 
