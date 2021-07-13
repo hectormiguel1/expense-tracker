@@ -2,6 +2,7 @@ package com.expense.tracker.services;
 
 import com.expense.tracker.models.Item;
 import com.expense.tracker.models.Receipt;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,6 +14,15 @@ import java.util.List;
  */
 @Service
 public class ReceiptService {
+
+  public void setStorageService(StorageService storageService) {
+    this.storageService = storageService;
+  }
+
+  @Autowired
+  private StorageService storageService;
+
+
 
   //
   // Fields
@@ -46,6 +56,7 @@ public class ReceiptService {
    */
   public Receipt createReceipt(Receipt newReceipt, String userUID)
   {
+
   }
 
 
@@ -55,8 +66,10 @@ public class ReceiptService {
    * @return       List<Receipt>
    * @param        userUID
    */
+
   public List<Receipt> getReceipts(String userUID)
   {
+    return storageService.getReceipts(userUID);
   }
 
 
@@ -66,8 +79,9 @@ public class ReceiptService {
    * @param        userUID
    * @param        receiptUID
    */
-  public List<Item>  getItems_(String  userUID, String receiptUID)
+  public List<Item> getItems_(String  userUID, String receiptUID)
   {
+    return storageService.getReceiptItems(userUID,receiptUID);
   }
 
 
