@@ -95,7 +95,9 @@ public class StorageService {
                 throw new UserDoesNotExistException("User" + userUid + " does not exist");
             }
             var query = db.collection(USER_COLLECTION).document(userUid).get().get().toObject(User.class);
-            return query.getCurrentExpenditure();
+            if(query != null) {
+                return query.getCurrentExpenditure();
+            }
         } catch (InterruptedException | ExecutionException e) {
             System.out.println("Error: " + e.getMessage());
             System.out.println("Error getting expenses for user: " + userUid);
@@ -108,12 +110,10 @@ public class StorageService {
             if(!db.collection(USER_COLLECTION).document(userUid).get().get().exists()){
                 throw new UserDoesNotExistException("User" + userUid + " does not exist");
             }
-            var query = db.collection(USER_COLLECTION).document(userUid).collection(USER_LIMIT_COLLECTION).get().get();
-            var limits = new HashMap<String, Double>();
-            for (var limit : query) {
-                limits.put(limit.getId(), limit.getDouble("amount"));
+            var query = db.collection(USER_COLLECTION).document(userUid).get().get().toObject(User.class);
+            if(query != null) {
+                return query.getLimits();
             }
-            return limits;
         } catch (InterruptedException | ExecutionException e) {
             System.out.println("Error: " + e.getMessage());
             System.out.println("Error getting limits for user: " + userUid);
@@ -128,12 +128,10 @@ public class StorageService {
             if(!db.collection(USER_COLLECTION).document(userUid).get().get().exists()){
                 throw new UserDoesNotExistException("User" + userUid + " does not exist");
             }
-            var recieptDocuments = db.collection(USER_COLLECTION).document(userUid).collection(RECEIPT_COLLECTION).get().get().getDocuments();
-            List<Receipt> receiptList = new ArrayList<>();
-            for(var document : recieptDocuments) {
-                receiptList.add(document.toObject(Receipt.class));
+            var query = db.collection(USER_COLLECTION).document(userUid).get().get().toObject(User.class);
+            if(query != null) {
+                return query.getReceipts();
             }
-            return receiptList;
 
         } catch (InterruptedException | ExecutionException e) {
             System.out.println("Error: " + e.getMessage());
@@ -156,7 +154,7 @@ public class StorageService {
         return null;
     }
 
-    public List<Item> getRecieptItems(String userUID, String receiptUID) throws UserDoesNotExistException, ReceiptDoesNotExistException {
+    public List<Item> getReceiptItems(String userUID, String receiptUID) throws UserDoesNotExistException, ReceiptDoesNotExistException {
         try {
             if(!db.collection(USER_COLLECTION).document(userUID).get().get().exists()){
                 throw new UserDoesNotExistException("User" + userUID + " does not exist");
@@ -164,12 +162,17 @@ public class StorageService {
             if(!db.collection(USER_COLLECTION).document(userUID).collection(RECEIPT_COLLECTION).document(receiptUID).get().get().exists()){
                 throw new ReceiptDoesNotExistException("Receipt" + receiptUID + " does not exist");
             }
-            var items = db.collection(USER_COLLECTION).document(userUID).collection(RECEIPT_COLLECTION).document(receiptUID).collection(ITEM_COLLECTION).get().get().getDocuments();
+            var query = db.collection(USER_COLLECTION).document(userUID).get().get().toObject(User.class);
             List<Item> itemList = new ArrayList<>();
-            for(var document : items) {
-                itemList.add(document.toObject(Item.class));
+            if(query != null) {
+                for (var receipt : query.getReceipts()) {
+                    if (receipt.getUid().equals(receiptUID)) {
+                        itemList.addAll(receipt.getItems());
+                    }
+                }
+                return itemList;
+
             }
-            return itemList;
         } catch (InterruptedException | ExecutionException e) {
             System.out.println("Error: " + e.getMessage());
             System.out.println("Error getting items: " + userUID + " " + receiptUID);
