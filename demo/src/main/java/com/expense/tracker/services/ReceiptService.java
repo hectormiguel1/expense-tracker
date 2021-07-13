@@ -56,7 +56,8 @@ public class ReceiptService {
    */
   public Receipt createReceipt(Receipt newReceipt, String userUID)
   {
-
+     storageService.saveReceipt(newReceipt, userUID);
+     return newReceipt;
   }
 
 
@@ -86,5 +87,6 @@ public class ReceiptService {
 
 
   public Receipt getReceipt(String userUID, String receiptUID) {
+      return storageService.getReceipts(userUID,receiptUID);
   }
 }
