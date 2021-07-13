@@ -25,10 +25,6 @@ import java.util.concurrent.ExecutionException;
 public class StorageService { 
 
     final private String USER_COLLECTION = "users";
-    final private String ITEM_COLLECTION = "items";
-    final private String RECEIPT_COLLECTION = "receipts";
-    final private String USER_LIMIT_COLLECTION = "limits";
-    final private String USER_EXPENSES_COLLECTION = "expenses";
 
     Firestore db = null;
     //File needs to be placed inside src/main/resources/ folder
@@ -162,9 +158,6 @@ public class StorageService {
         try {
             if(!db.collection(USER_COLLECTION).document(userUID).get().get().exists()){
                 throw new UserDoesNotExistException("User" + userUID + " does not exist");
-            }
-            if(!db.collection(USER_COLLECTION).document(userUID).collection(RECEIPT_COLLECTION).document(receiptUID).get().get().exists()){
-                throw new ReceiptDoesNotExistException("Receipt" + receiptUID + " does not exist");
             }
             var query = db.collection(USER_COLLECTION).document(userUID).get().get().toObject(User.class);
             List<Item> itemList = new ArrayList<>();
