@@ -87,6 +87,6 @@ public class ReceiptService {
 
 
   public Receipt getReceipt(String userUID, String receiptUID) {
-      return storageService.getReceipts(userUID,receiptUID);
+      return storageService.getReceipt(userUID,receiptUID);
   }
 }
