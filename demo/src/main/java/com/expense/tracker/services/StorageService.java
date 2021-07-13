@@ -89,7 +89,7 @@ public class StorageService {
         
     }
    
-    Map<String, Double> getUserExpenses(String userUid) throws UserDoesNotExistException {
+    public Map<String, Double> getUserExpenses(String userUid) throws UserDoesNotExistException {
         try{
             if(!db.collection(USER_COLLECTION).document(userUid).get().get().exists()){
                 throw new UserDoesNotExistException("User" + userUid + " does not exist");
@@ -105,7 +105,7 @@ public class StorageService {
         return null;
     }
 
-    Map<String, Double> getUserLimits(String userUid) throws UserDoesNotExistException {
+    public Map<String, Double> getUserLimits(String userUid) throws UserDoesNotExistException {
         try{
             if(!db.collection(USER_COLLECTION).document(userUid).get().get().exists()){
                 throw new UserDoesNotExistException("User" + userUid + " does not exist");
@@ -120,10 +120,10 @@ public class StorageService {
         }
         return null;
     }
-    
-        
 
-    List<Receipt> getReceipts(String userUid) throws UserDoesNotExistException {
+
+
+    public List<Receipt> getReceipts(String userUid) throws UserDoesNotExistException {
         try {
             if(!db.collection(USER_COLLECTION).document(userUid).get().get().exists()){
                 throw new UserDoesNotExistException("User" + userUid + " does not exist");
