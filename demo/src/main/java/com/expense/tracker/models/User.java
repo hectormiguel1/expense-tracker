@@ -2,6 +2,7 @@ package com.expense.tracker.models;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Class User
@@ -116,4 +117,17 @@ public class User {
   // Other methods
   //
 
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    User user = (User) o;
+    return Objects.equals(uid, user.uid) && Objects.equals(name, user.name) && Objects.equals(receipts, user.receipts) && Objects.equals(Limits, user.Limits) && Objects.equals(currentExpenditure, user.currentExpenditure);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(uid, name, receipts, Limits, currentExpenditure);
+  }
 }

@@ -60,7 +60,19 @@ public class StorageService {
             System.out.println("Error saving user: " + newUserUid);
         }
         return null;
+    }
 
+    //Returns the User from DB with UID = userUID
+    public User getUser(String userUid) throws UserDoesNotExistException {
+        try {
+            var user = db.collection(USER_COLLECTION).document(userUid).get().get();
+            if(user.exists()) {
+                return user.toObject(User.class);
+            }
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     //Updates a user in the Firebase 
