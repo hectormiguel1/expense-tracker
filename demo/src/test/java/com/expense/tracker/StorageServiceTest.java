@@ -6,6 +6,7 @@ import com.expense.tracker.services.StorageService;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class StorageServiceTest {
 
@@ -34,6 +35,7 @@ public class StorageServiceTest {
         user.setLimits(limits);
 
         storageService.saveNewUser(user);
+        var expected = User();
     }
 
 
