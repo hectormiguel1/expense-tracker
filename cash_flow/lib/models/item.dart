@@ -30,4 +30,8 @@ class Item {
       "uid": uid
     };
   }
+
+  String toString() {
+    return "Item:{Category: ${enumToString(category)}, name: $name, price: $price";
+  }
 }

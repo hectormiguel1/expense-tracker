@@ -45,4 +45,3 @@ Future<List<T>> get<T>({required String endPoint}) async {
 }
 
 
-}

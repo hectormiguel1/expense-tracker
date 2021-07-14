@@ -42,6 +42,10 @@ factory Receipt.fromJson(Map<String, dynamic> json) {
       "uid": this.uid,
     };
   }
-  
+
+  @override
+  String toString() {
+    return 'Receipt: {storeName: $storeName, storeAddress: $storeAddress, items: $items, tota: $total}';
+  }  
 
 }

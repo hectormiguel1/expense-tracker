@@ -1,4 +1,5 @@
 import 'package:cash_flow/views/login.dart';
+import 'package:cash_flow/views/ocrTest.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -29,7 +30,7 @@ class MyApp extends StatelessWidget {
           secondaryVariant: Colors.green[900]!
         )
       ),
-      home: Login(),
+      home: OCRTest(),
     );
   }
 }
