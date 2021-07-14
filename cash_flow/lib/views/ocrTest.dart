@@ -6,8 +6,8 @@ import 'package:cash_flow/models/category.dart';
 import 'package:cash_flow/models/item.dart';
 import 'package:cash_flow/providers/credentials.dart';
 import 'package:flutter/material.dart';
-import 'package:filesystem_picker/filesystem_picker.dart';
 import 'package:googleapis/vision/v1.dart' as Google;
+import 'package:file_picker/file_picker.dart';
 
 
 class OCRTest extends StatefulWidget {
@@ -22,25 +22,18 @@ class _OCRTestState extends State<OCRTest> {
 
 
   void selectFile() async {
-    String? path = await FilesystemPicker.open(
-      rootDirectory: Directory.current,
-      title: "Pick Receipt Image",
-      context: context,
-      fsType: FilesystemType.file,
+    dynamic image;
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+          type: FileType.custom,
+          allowedExtensions: ['jpg', 'pdf', 'doc'],
+          allowMultiple: false
+        );
+        if(result != null) {
+          image = result.files.first.bytes;
+                String imageBase64 = base64Encode(image);
 
-    );
-    if(path != null) {
-      setState(() => this.filePath = path);
-      List<int> imageBytes = await File(filePath).readAsBytes();
-      String imageBase64 = base64Encode(imageBytes);
-      String ocrResult = await runOCR(imageBase64);
-      print(ocrResult);
-      Receipt receipt = await parseOCR(ocrResult);
-      print(receipt.toString());
-
-    }
-
-
+          parseOCR(await runOCR(imageBase64)).then( (val) => print(val.toString()));
+        }
   }
 
   int findBegin(List<String> items) {

@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/services.dart';
 import 'package:googleapis/vision/v1.dart';
 import 'package:googleapis_auth/auth_io.dart';
@@ -8,8 +6,7 @@ class CredentialsProvider {
   CredentialsProvider();
 
   Future<ServiceAccountCredentials> get _credentials async {
-    print(Directory.current);
-    String _file = await rootBundle.loadString("${Directory.current.path}/assets/serviceAccount.json");
+    String _file = await rootBundle.loadString("serviceAccount.json");
     return ServiceAccountCredentials.fromJson(_file);
   }
 
