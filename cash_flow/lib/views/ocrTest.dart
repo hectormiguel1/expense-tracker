@@ -137,13 +137,14 @@ class _OCRTestState extends State<OCRTest> {
             FlatButton(child: 
             Text("Press to select Receipt Image"),
             onPressed: selectFile),
-      
-            if(image != null) 
-              Image.memory(image!),
-            
-              
-            
-            Text('OCR Text:' + ocrText),
+            SizedBox(height: 20,),
+
+              if(image != null) 
+              Image.memory(image!, scale: 1.5),    
+              SizedBox(width: 10,),
+
+                  Text('OCR Text:' + ocrText, softWrap: true,),
+
           ]
         ),
       ));
