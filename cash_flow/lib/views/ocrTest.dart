@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:cash_flow/models/Receipt.dart';
 import 'package:cash_flow/models/category.dart';
@@ -16,23 +17,28 @@ class OCRTest extends StatefulWidget {
 }
 
 class _OCRTestState extends State<OCRTest> {
-  String filePath = "";
+  Uint8List? image;
   String ocrText = "";
   var _client = CredentialsProvider().client;
 
 
   void selectFile() async {
-    dynamic image;
     FilePickerResult? result = await FilePicker.platform.pickFiles(
           type: FileType.custom,
           allowedExtensions: ['jpg', 'pdf', 'doc'],
           allowMultiple: false
         );
         if(result != null) {
-          image = result.files.first.bytes;
-                String imageBase64 = base64Encode(image);
+          String imageBase64 = base64Encode(result.files.first.bytes!);
 
-          parseOCR(await runOCR(imageBase64)).then( (val) => print(val.toString()));
+          parseOCR(await runOCR(imageBase64)).then( (val) {
+            setState(() {
+              ocrText = val.toJson().toString();
+            });
+          });
+          setState(() {
+            image = result.files.first.bytes!;
+          });
         }
   }
 
@@ -132,8 +138,10 @@ class _OCRTestState extends State<OCRTest> {
             Text("Press to select Receipt Image"),
             onPressed: selectFile),
       
-            if(filePath != "") 
-              Image.file(File(filePath)),
+            if(image != null) 
+              Image.memory(image!),
+            
+              
             
             Text('OCR Text:' + ocrText),
           ]
