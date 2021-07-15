@@ -1,5 +1,6 @@
 import 'package:cash_flow/components/logincard.dart';
 import 'package:cash_flow/components/registerCard.dart';
+import 'package:cash_flow/views/ocrTest.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../backend/authentication.dart' as Auth;
@@ -16,10 +17,10 @@ class _LoginState extends State<Login> {
 
   
 
-  static void login({required String email, required String password}) {
+  void login({required String email, required String password}) {
     var user =  Auth.login(email, password); 
     if(user != null) {
-      //Move to another home screen. 
+      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => OCRTest()));
     }
   }
 

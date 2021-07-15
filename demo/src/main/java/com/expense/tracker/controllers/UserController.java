@@ -2,6 +2,8 @@ package com.expense.tracker.controllers;
 
 import com.expense.tracker.models.User;
 import com.expense.tracker.services.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,6 +15,7 @@ import java.util.Map;
 @RestController
 public class UserController {
 
+  @Autowired
   private UserService userService;
 
 
@@ -20,6 +23,8 @@ public class UserController {
   {
     this.userService = userService;
   }
+
+  private final Logger log = LoggerFactory.getLogger(UserController.class);
 
   /**
    * Set the value of userService
@@ -45,9 +50,11 @@ public class UserController {
    * @param newUser //Todo, add Mapping and add PathVariable
    *
    */
+  @CrossOrigin
   @PutMapping("/newUser")
   public void createNewUser(@RequestBody User newUser)
   {
+    log.info("Adding new user: " + newUser);
     userService.createUser(newUser);
   }
 
@@ -59,8 +66,10 @@ public class UserController {
    * @param        modifiedUser
    */
   @PutMapping("/user")
+  @CrossOrigin
   public void modifyUser(@RequestBody User modifiedUser)
   {
+    log.info("Modifying user: " + modifiedUser.getUid() + " with data: " + modifiedUser);
     userService.modifyUser(modifiedUser);
   }
 
@@ -72,8 +81,10 @@ public class UserController {
    * @param        uid
    */
   @GetMapping("/user/{uid}/limits")
+  @CrossOrigin
   public Map<String, Double> getUserLimits(@PathVariable  String uid)
   {
+    log.info("Getting user Limits for user: " + uid);
     return userService.getLimits(uid);
   }
 
@@ -86,8 +97,10 @@ public class UserController {
    */
 
   @GetMapping("/user/{uid}/expenditure")
+  @CrossOrigin
   public Map<String, Double> getUserExpenditure(@PathVariable  String uid)
   {
+    log.info("Getting user Expenditure for user " + uid);
      return userService.getCurrentSpending(uid);
   }
 

@@ -9,9 +9,9 @@ const String backEndBaseUrl = "http://localhost:8080/";
 Future<void> add<T>({required String endPoint, required T object}) async {
   print(
       'Adding ${Marshal.getType<T>()}: ${json.encode(Marshal.toJson<T>(object))}');
-  var composedEndPoint = backEndBaseUrl + Marshal.getTypeEndPoint<T>() + '/$endPoint';
+  var composedEndPoint = backEndBaseUrl + '$endPoint';
 
-  var response = await http.post(Uri.parse(composedEndPoint),
+  var response = await http.put(Uri.parse(composedEndPoint),
       body: json.encode(Marshal.toJson<T>(object)),
       headers: {'Content-Type': 'application/json'});
   if (response.statusCode == 200) {

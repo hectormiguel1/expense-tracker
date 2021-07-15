@@ -3,11 +3,10 @@ package com.expense.tracker.controllers;
 
 import com.expense.tracker.models.Receipt;
 import com.expense.tracker.services.ReceiptService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -19,6 +18,8 @@ public class ReceiptController {
 
   @Autowired
   private ReceiptService receiptService;
+
+  final Logger log = LoggerFactory.getLogger(ReceiptController.class);
 
   public ReceiptController() { };
 
@@ -46,7 +47,9 @@ public class ReceiptController {
    * @param        newReceipt
    */
   @PutMapping("/user/{uid}/receipt")
+  @CrossOrigin
   public void newReceipt(@PathVariable String uid, Receipt newReceipt) {
+    log.info("Adding Receipt to user " + uid + " receipt data: " +newReceipt.toString() );
     receiptService.createReceipt(newReceipt,uid);
   }
 
@@ -58,7 +61,9 @@ public class ReceiptController {
    * @param        uid
    */
   @GetMapping("user/{uid}/receipts")
+  @CrossOrigin
   public List<Receipt> getAllReceipts(@PathVariable String uid) {
+    log.info("Getting Receipts for user: " + uid);
     return receiptService.getReceipts(uid);
   }
 
@@ -71,7 +76,9 @@ public class ReceiptController {
    * @param        receiptUID
    */
   @GetMapping("user/{uid}/receipt/{receiptUID}")
+  @CrossOrigin
   public Receipt getReceipt(@PathVariable String uid, @PathVariable String receiptUID) {
+    log.info("Getting Receipt " + receiptUID + " for user " + uid);
     return receiptService.getReceipt(uid,receiptUID);
   }
 

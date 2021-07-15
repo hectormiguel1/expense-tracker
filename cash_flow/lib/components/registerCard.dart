@@ -1,4 +1,7 @@
+import 'package:cash_flow/backend/authentication.dart';
 import 'package:cash_flow/components/loginScreenButton.dart';
+import 'package:cash_flow/components/textform.dart';
+import 'package:cash_flow/views/ocrTest.dart';
 import 'package:flutter/material.dart';
 
 class RegisterCard extends StatefulWidget {
@@ -6,10 +9,11 @@ class RegisterCard extends StatefulWidget {
 }
 
 class _RegisterCardState extends State<RegisterCard> {
-  TextEditingController nameField = new TextEditingController();
-  TextEditingController emailField = new TextEditingController();
-  TextEditingController passwordField = new TextEditingController();
-  TextEditingController confirmPasswordField = new TextEditingController();
+  TextEditingController nameField = TextEditingController();
+  TextEditingController emailField = TextEditingController();
+  TextEditingController passwordField = TextEditingController();
+  TextEditingController confirmPasswordField = TextEditingController();
+  bool passwordsMatch = true;
 
 
   Widget build(BuildContext context) {
@@ -17,7 +21,7 @@ class _RegisterCardState extends State<RegisterCard> {
                       height: 500,
                       width: 400,
                       child: Card(
-                        color: Color(0xFFF5F5F5),
+                        color: Colors.white,
                         elevation: 20,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20),
@@ -26,116 +30,38 @@ class _RegisterCardState extends State<RegisterCard> {
                             mainAxisSize: MainAxisSize.min,
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Padding(
-                                padding: EdgeInsets.fromLTRB(12, 12, 12, 12),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [            
-                                      Container(
-                                        width: 330,
-                                        height: 60,
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius: BorderRadius.circular(8),
-                                          border: Border.all(
-                                            color: Color(0xFFE6E6E6),
-                                          
-                                        )),
-                                        child: Padding(
-                                          padding:
-                                              EdgeInsets.fromLTRB(20, 20, 20, 20),
-                                          child: TextFormField(
-                                            controller: emailField,
-                                            obscureText: false,
-                                            decoration: InputDecoration(
-                                              labelText: 'Email',
-                                            
-                                              hintText: 'Please enter your email....',
-                                             
-                                                enabledBorder: UnderlineInputBorder(
-                                                borderSide: BorderSide(
-                                                  color: Color(0x00000000),
-                                                  width: 1,
-                                                ),
-                                                borderRadius: const BorderRadius.only(
-                                                  topLeft: Radius.circular(4.0),
-                                                  topRight: Radius.circular(4.0),
-                                                ),
-                                              ),
-                                              focusedBorder: UnderlineInputBorder(
-                                                borderSide: BorderSide(
-                                                  color: Color(0x00000000),
-                                                  width: 1,
-                                                ),
-                                                borderRadius: const BorderRadius.only(
-                                                  topLeft: Radius.circular(4.0),
-                                                  topRight: Radius.circular(4.0),
-                                                ),
-                                              ),
-                                            )   
-                                          ),
-                                        ),
-                                      ),
-                                  ],
+                                TextForm(
+                                  controller: nameField, 
+                                  label: "Name",
+                                  hintText: "Enter your name",
+                                  isPasswordField: false,
                                 ),
+                              TextForm(
+                                controller: emailField,
+                                label: "Email",
+                                hintText: "Enter your email",
+                                isPasswordField: false,
                               ),
-                              Padding(
-                                padding: EdgeInsets.fromLTRB(12, 12, 12, 12),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [            
-                                      Container(
-                                        width: 330,
-                                        height: 60,
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius: BorderRadius.circular(8),
-                                          border: Border.all(
-                                            color: Color(0xFFE6E6E6),
-                                          
-                                        )),
-                                        child: Padding(
-                                          padding:
-                                              EdgeInsets.fromLTRB(20, 20, 20, 20),
-                                          child: TextFormField(
-                                            controller: passwordField,
-                                            obscureText: true,
-                                            decoration: InputDecoration(
-                                              labelText: 'Password',
-                                            
-                                              hintText: 'Please enter your password....',
-                                               enabledBorder: UnderlineInputBorder(
-                                                borderSide: BorderSide(
-                                                  color: Color(0x00000000),
-                                                  width: 1,
-                                                ),
-                                                borderRadius: const BorderRadius.only(
-                                                  topLeft: Radius.circular(4.0),
-                                                  topRight: Radius.circular(4.0),
-                                                ),
-                                              ),
-                                              focusedBorder: UnderlineInputBorder(
-                                                borderSide: BorderSide(
-                                                  color: Color(0x00000000),
-                                                  width: 1,
-                                                ),
-                                                borderRadius: const BorderRadius.only(
-                                                  topLeft: Radius.circular(4.0),
-                                                  topRight: Radius.circular(4.0),
-                                                ),
-                                              ),
-                                            
-                                            )   
-                                          ),
-                                        ),
-                                      ),
-                                    
-                                  ],
-                                ),
+                              TextForm(
+                                isPasswordField: true,
+                                controller: passwordField,
+                                label: "Create new Password",
+                                hintText: "Create new Password",
                               ),
-                              SizedBox(height: 20,),
+
+                              TextForm(
+                                controller: confirmPasswordField,
+                                label: "Confirm password",
+                                hintText: "Confirm your password",
+                                isPasswordField: true),
+                              SizedBox(height: 10),
+                              if(!passwordsMatch) 
+                              Text("Passwords do not match!", style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.red,
+                                fontSize: 24,
+                              )),
+                              SizedBox(height: 10,),
                               Row(
                                 mainAxisSize: MainAxisSize.max,
                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -144,16 +70,8 @@ class _RegisterCardState extends State<RegisterCard> {
                                    SizedBox(
                                      width: 100,
                                      height: 50,
-                                     child: LoginScreenButton(text: "Register", color: Theme.of(context).colorScheme.secondary, onTap: () {}, icon: Icons.add)
-                                   ),
-                                  
-                                  SizedBox(width: 50,),                   
-                                  SizedBox(
-                                    width: 100,
-                                    height: 50,
-                                    child: LoginScreenButton(text: "Login", icon: Icons.check, color: Theme.of(context).colorScheme.primary, onTap: () {}))
-                                  
-                              
+                                     child: LoginScreenButton(text: "Register", color: Theme.of(context).colorScheme.secondary, onTap: handleRegister, icon: Icons.add)
+                                   ),                          
                                   
                                 ],
                               )
@@ -161,6 +79,23 @@ class _RegisterCardState extends State<RegisterCard> {
                           ),
                         ),
                     );
+  }
+
+  void handleRegister() async {
+    if(passwordField.text != confirmPasswordField.text) {
+      setState(() {
+        passwordsMatch = false;
+      });
+    } 
+    else {
+    var result = await register(emailField.text, passwordField.text, nameField.text);
+    if(result != null) {
+      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (builder) => OCRTest()));
+    } else {
+      
+    }
+    }
+
   }
 
 }

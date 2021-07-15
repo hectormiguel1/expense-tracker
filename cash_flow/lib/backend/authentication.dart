@@ -6,23 +6,35 @@ import 'package:cash_flow/backend/backendconnection.dart' as Database;
 
 FirebaseAuth _auth = FirebaseAuth.instance;
 
-Future<Model.User> register(String email, String password, String name) async {
-  UserCredential user = await _auth.createUserWithEmailAndPassword(email: email, password: password);
+Future<Model.User?> register(String email, String password, String name) async {
+  Model.User? modelUser;
+  try{
+  _auth.createUserWithEmailAndPassword(email: email, password: password).then((val) {
+    var modeluser = Model.User(name: name, uid: val.user!.uid, receipts: [], limits: Map<String, double>(), currentExpenditure: Map<String, double>());
+        modelUser = modeluser;
 
-  if(user != null) {
-    var modelUser = Model.User(name: name, uid: user.user!.uid);
-    Database.add<Model.User>(endPoint: "", object: modelUser);
-    return modelUser;
-  } else throw Exception("Error creating account");
-  
+    Database.add<Model.User>(endPoint: "newUser", object: modelUser!).then((_) {
+      print("Connected with DB");
+    });
+    return modeluser;
+  } );
+  } on Error catch(e) {
+    print("Null somewhere");
+  }
   
 }
 
-Future<Model.User> login(String email, String password) async {
-  UserCredential user = await _auth.signInWithEmailAndPassword(email: email, password: password);
-  if(user != null) {
+Future<Model.User?> login(String email, String password) async {
+  Model.User? loadedUser;
+  await _auth.signInWithEmailAndPassword(email: email, password: password).then( (user) async {
     var modelUser = Model.User(name: user.user!.displayName!, uid: user.user!.uid);
-    modelUser.receipts = await Database.get<Receipt>(endPoint: "allreceipts/" + user.user!.uid);
-    return modelUser;
-  } else throw Exception("Error logging in");
+    await Database.get<Receipt>(endPoint: '/user/${modelUser.uid}/receipts').then((receipts) => modelUser.receipts = receipts);
+    await Database.get<Map<String, double>>(endPoint: '/user/${modelUser.uid}/limits').then((limits) => modelUser.limits = limits.single);
+    await Database.get<Map<String, double>>(endPoint: '/user/${modelUser.uid}/expenditure').then((expenditure) => modelUser.currentExpenditure = expenditure.single);
+    loadedUser = modelUser;
+  }).onError((error, stackTrace) {
+    print('Error: ${error}');
+    throw Exception("Unable to login, or fetch data");
+  });
+  return loadedUser;
 } 
